@@ -1,5 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
+import json
+from datetime import datetime
+import sys
 
 def scrape_dell_community(url):
     """
@@ -114,14 +117,30 @@ def scrape_dell_community(url):
 
 def main():
     """
-    urls.txtからURLを読み込み、各URLの情報を抽出して表示する
+    コマンドライン引数で指定されたファイルからURLを読み込み、各URLの情報を抽出して表示し、JSONファイルに書き出す
     """
-    try:
-        with open("urls.txt", "r", encoding="utf-8") as f:
-            urls = [line.strip() for line in f if line.strip()]
+    if len(sys.argv) < 2:
+        print("使用法: python scraping.py <URL/threadIDリストtxtファイル名>")
+        sys.exit(1)
 
+    input_filename = sys.argv[1]
+
+    try:
+        base_url = "https://www.dell.com/community/en/conversations/x//"
+        with open(input_filename, "r", encoding="utf-8") as f:
+            urls = []
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                if not line.startswith("http"):
+                    line = base_url + line
+                urls.append(line)
+
+        all_data = []
         for url in urls:
             data = scrape_dell_community(url)
+            all_data.append(data)
             print("--- 抽出結果 ---")
             if "error" in data:
                 print(f"URL: {data['url']}")
@@ -138,8 +157,18 @@ def main():
                 print(data['comments'])
             print("\n" + "="*50 + "\n")
 
+        # ファイル名の生成
+        date_str = datetime.now().strftime("%y%m%d%H%M")
+        output_filename = f"dcfcontents_{date_str}.json"
+
+        # JSONファイルへの書き出し
+        with open(output_filename, "w", encoding="utf-8") as f:
+            json.dump(all_data, f, ensure_ascii=False, indent=4)
+        
+        print(f"データが {output_filename} に保存されました。")
+
     except FileNotFoundError:
-        print("urls.txtが見つかりません。")
+        print(f"{input_filename}が見つかりません。")
     except Exception as e:
         print(f"エラーが発生しました: {e}")
 
