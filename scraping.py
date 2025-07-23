@@ -20,6 +20,13 @@ def scrape_dell_community(url):
         # --- タイトルの取得 ---
         title_element = soup.find('h1', class_='conversation-balloon__content__title')
         title = title_element.get_text(strip=True) if title_element else "タイトルが見つかりません"
+        # if title_element:
+        #     # get_text()を使い、タグ内のテキストをスペース区切りで結合し、空白を正規化する
+        #     title_text = title_element.get_text(separator=' ', strip=True)
+        #     # 改行等をスペースに置換し、連続するスペースを1つにまとめる
+        #     title = ' '.join(title_text.split())
+        # else:
+        #     title = "タイトル不明"
 
         # --- 投稿者名の取得 ---
         # 質問コンテナ内のユーザー情報を探す
