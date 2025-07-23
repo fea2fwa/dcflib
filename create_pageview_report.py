@@ -115,7 +115,7 @@ def main():
     time_cols = sorted([c for c in df.columns if c != 'title'])
     
     # 列数が100を超えていたら、超過分を古い順に削除
-    MAX_COLS = 2
+    MAX_COLS = 100
     if len(time_cols) > MAX_COLS:
         num_to_drop = len(time_cols) - MAX_COLS
         cols_to_drop = time_cols[:num_to_drop]
