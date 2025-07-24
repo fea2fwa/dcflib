@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 from datetime import datetime
+import os
 import sys
 
 def scrape_dell_community(url):
@@ -126,6 +127,10 @@ def main():
     """
     コマンドライン引数で指定されたファイルからURLを読み込み、各URLの情報を抽出して表示し、JSONファイルに書き出す
     """
+    # JSONファイルを保存するディレクトリ
+    JSON_DIR = "jsonfiles"
+    os.makedirs(JSON_DIR, exist_ok=True)
+
     if len(sys.argv) < 2:
         print("使用法: python scraping.py <URL/threadIDリストtxtファイル名>")
         sys.exit(1)
@@ -166,7 +171,7 @@ def main():
 
         # ファイル名の生成
         date_str = datetime.now().strftime("%y%m%d%H%M")
-        output_filename = f"dcfcontents_{date_str}.json"
+        output_filename = os.path.join(JSON_DIR, f"dcfcontents_row_{date_str}.json")
 
         # JSONファイルへの書き出し
         with open(output_filename, "w", encoding="utf-8") as f:
